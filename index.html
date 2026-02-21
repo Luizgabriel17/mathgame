@@ -7,43 +7,55 @@
 </head>
 <body>
 
+<div id="app">
+
   <!-- BOAS VINDAS -->
   <div id="welcome-screen" class="screen">
     <h1>🎮 MathGame</h1>
-    <h2>Olá, Francisco Arthur! 👋</h2>
+    <h2>Olá, Francisco Arthur 👋</h2>
     <div class="mascot">🤖</div>
-    <button onclick="startGame()">Começar</button>
+    <button onclick="goToMenu()">Começar</button>
   </div>
 
-  <!-- MENU DE MODOS -->
+  <!-- MENU -->
   <div id="menu-screen" class="screen hidden">
     <h2>Escolha o desafio</h2>
+
     <button onclick="startMode('soma')">➕ Soma</button>
     <button onclick="startMode('sub')">➖ Subtração</button>
     <button onclick="startMode('contagem')">🔢 Contagem</button>
+    <button onclick="startMode('portugues')">📚 Português</button>
+    <button onclick="startMode('historia')">📖 Histórias</button>
+    <button onclick="startMode('drag')">🧩 Arrastar Sílabas</button>
+    <button onclick="startMode('montar')">✏ Montar Palavra</button>
+
   </div>
 
   <!-- JOGO -->
   <div id="game-screen" class="screen hidden">
-    <h2 id="phase-title"></h2>
-    <p id="score">⭐ Pontos: 0</p>
 
-    <div id="mascot-talk">Vamos lá! 🚀</div>
+    <div class="top-bar">
+      <span id="phase-title"></span>
+      <span id="score">⭐ 0</span>
+    </div>
 
-    <div id="question"></div>
+    <button class="back-btn" onclick="goToMenu()">⬅ Menu</button>
+
+    <div id="question" class="question-box"></div>
     <div id="answers"></div>
 
-    <p id="feedback"></p>
+    <!-- Drag Area -->
+    <div id="drag-area" class="hidden">
+      <div id="drop-zone">Monte aqui</div>
+      <div id="syllables"></div>
+    </div>
+
+    <div id="feedback"></div>
+
   </div>
 
-  <!-- TELA FINAL -->
-  <div id="final-screen" class="screen hidden">
-    <h1>🏆 Parabéns!</h1>
-    <h2>Você terminou!</h2>
-    <p id="final-score"></p>
-    <button onclick="goToMenu()">Jogar Novamente</button>
-  </div>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

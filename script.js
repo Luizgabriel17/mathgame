@@ -1,134 +1,165 @@
 let score = 0;
-let phase = 1;
-let questionCount = 0;
-let correctAnswer = 0;
+let correctAnswer = "";
 let currentMode = "";
-const maxPhases = 3;
-const questionsPerPhase = 5;
 
-function startGame() {
-  showScreen("menu-screen");
-}
-
-function startMode(mode) {
-  currentMode = mode;
-  score = 0;
-  phase = 1;
-  questionCount = 0;
-  document.getElementById("score").innerText = "⭐ Pontos: 0";
-  showScreen("game-screen");
-  generateQuestion();
-}
-
-function showScreen(id) {
+function showScreen(id){
   document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
 }
 
-function generateQuestion() {
-  if (phase > maxPhases) {
-    endGame();
-    return;
-  }
-
-  if (questionCount >= questionsPerPhase) {
-    phase++;
-    questionCount = 0;
-  }
-
-  document.getElementById("phase-title").innerText = "Fase " + phase;
-  document.getElementById("feedback").innerText = "";
-
-  if (currentMode === "soma") generateSoma();
-  if (currentMode === "sub") generateSub();
-  if (currentMode === "contagem") generateContagem();
-}
-
-function generateSoma() {
-  let n1 = rand(phase * 5);
-  let n2 = rand(phase * 5);
-  correctAnswer = n1 + n2;
-  document.getElementById("question").innerText = `${n1} + ${n2} = ?`;
-  createOptions();
-}
-
-function generateSub() {
-  let n1 = rand(phase * 5) + 5;
-  let n2 = rand(phase * 5);
-  correctAnswer = n1 - n2;
-  document.getElementById("question").innerText = `${n1} - ${n2} = ?`;
-  createOptions();
-}
-
-function generateContagem() {
-  let count = rand(phase * 5);
-  correctAnswer = count;
-  let emojis = "🍎".repeat(count);
-  document.getElementById("question").innerText = emojis;
-  createOptions();
-}
-
-function createOptions() {
-  const div = document.getElementById("answers");
-  div.innerHTML = "";
-  let options = [correctAnswer];
-
-  while (options.length < 3) {
-    let wrong = correctAnswer + rand(5) - 2;
-    if (!options.includes(wrong) && wrong >= 0) options.push(wrong);
-  }
-
-  options.sort(() => Math.random() - 0.5);
-
-  options.forEach(op => {
-    const btn = document.createElement("button");
-    btn.innerText = op;
-    btn.onclick = () => checkAnswer(op);
-    div.appendChild(btn);
-  });
-}
-
-function checkAnswer(ans) {
-  if (ans === correctAnswer) {
-    playSound(true);
-    score++;
-    questionCount++;
-    document.getElementById("score").innerText = "⭐ Pontos: " + score;
-    document.getElementById("feedback").innerText = "🎉 Muito bem!";
-    saveProgress();
-    setTimeout(generateQuestion, 1000);
-  } else {
-    playSound(false);
-    document.getElementById("feedback").innerText = "❌ Tente novamente!";
-  }
-}
-
-function endGame() {
-  showScreen("final-screen");
-  document.getElementById("final-score").innerText =
-    "Você fez " + score + " pontos!";
-}
-
-function goToMenu() {
+function goToMenu(){
+  resetGame();
   showScreen("menu-screen");
 }
 
-function rand(max) {
-  return Math.floor(Math.random() * max) + 1;
+function startMode(mode){
+  resetGame();
+  currentMode = mode;
+  showScreen("game-screen");
+  generateQuestion();
 }
 
-/* Sons suaves */
-function playSound(correct) {
-  let audio = new Audio(
-    correct
-      ? "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-      : "https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"
-  );
-  audio.volume = 0.3;
-  audio.play();
+function resetGame(){
+  score = 0;
+  document.getElementById("score").innerText = "⭐ 0";
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("drag-area").classList.add("hidden");
 }
 
-/* Salvar progresso */
-function saveProgress() {
-  localStorage.setItem("mathgame_score", score);
+function generateQuestion(){
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("answers").innerHTML = "";
+  document.getElementById("drag-area").classList.add("hidden");
+
+  if(currentMode==="soma") generateSoma();
+  if(currentMode==="sub") generateSub();
+  if(currentMode==="contagem") generateContagem();
+  if(currentMode==="portugues") generatePortugues();
+  if(currentMode==="historia") generateHistoria();
+  if(currentMode==="drag") generateDragWord();
+  if(currentMode==="montar") generateMontar();
 }
+
+function generateSoma(){
+  let a = rand(10), b = rand(10);
+  correctAnswer = a+b;
+  setQuestion(`${a} + ${b} = ?`);
+  createOptions([correctAnswer, correctAnswer+1, correctAnswer-1]);
+}
+
+function generateSub(){
+  let a = rand(10)+5, b = rand(5);
+  correctAnswer = a-b;
+  setQuestion(`${a} - ${b} = ?`);
+  createOptions([correctAnswer, correctAnswer+1, correctAnswer-1]);
+}
+
+function generateContagem(){
+  let n = rand(8);
+  correctAnswer = n;
+  setQuestion("Conte: "+ "🍎".repeat(n));
+  createOptions([n,n+1,n-1]);
+}
+
+function generatePortugues(){
+  const perguntas = [
+    {q:"Qual está correta?", op:["BOLA","BOLLA","BOLAH"], a:"BOLA"},
+    {q:"🐶 Qual é?", op:["CACHORRO","GATO","PATO"], a:"CACHORRO"},
+    {q:"Qual rima com PATO?", op:["GATO","CASA","BOLA"], a:"GATO"}
+  ];
+  let p = perguntas[rand(perguntas.length)-1];
+  correctAnswer = p.a;
+  setQuestion(p.q);
+  createOptions(p.op);
+}
+
+function generateHistoria(){
+  const historias = [
+    {t:"Luna tem um gato.\nQuem tem um gato?", op:["Luna","Pedro","O pai"], a:"Luna"},
+    {t:"Pedro foi ao parque.\nOnde ele foi?", op:["Parque","Escola","Casa"], a:"Parque"}
+  ];
+  let h = historias[rand(historias.length)-1];
+  correctAnswer = h.a;
+  setQuestion(h.t);
+  createOptions(h.op);
+}
+
+function generateDragWord(){
+  const palavras = [
+    {p:"BOLO", s:["BO","LO"]},
+    {p:"CASA", s:["CA","SA"]}
+  ];
+  let w = palavras[rand(palavras.length)-1];
+  correctAnswer = w.p;
+  setQuestion("Arraste as sílabas:");
+  document.getElementById("drag-area").classList.remove("hidden");
+  let drop = document.getElementById("drop-zone");
+  drop.innerText="";
+  let syl = document.getElementById("syllables");
+  syl.innerHTML="";
+  w.s.sort(()=>Math.random()-0.5);
+  w.s.forEach(s=>{
+    let span=document.createElement("span");
+    span.innerText=s;
+    span.className="syllable";
+    span.draggable=true;
+    span.ondragstart=e=>e.dataTransfer.setData("text",s);
+    syl.appendChild(span);
+  });
+  drop.ondrop=e=>{
+    e.preventDefault();
+    drop.innerText+=e.dataTransfer.getData("text");
+    if(drop.innerText===correctAnswer) correct();
+  };
+  drop.ondragover=e=>e.preventDefault();
+}
+
+function generateMontar(){
+  const palavras=["GATO","BOLA"];
+  let p=palavras[rand(palavras.length)-1];
+  correctAnswer=p;
+  setQuestion("Clique nas letras:");
+  p.split("").sort(()=>Math.random()-0.5).forEach(l=>{
+    let btn=document.createElement("button");
+    btn.innerText=l;
+    btn.onclick=()=>checkMontar(l);
+    document.getElementById("answers").appendChild(btn);
+  });
+  window.tentativa="";
+}
+
+function checkMontar(l){
+  window.tentativa+=l;
+  if(window.tentativa===correctAnswer) correct();
+}
+
+function createOptions(options){
+  options.sort(()=>Math.random()-0.5);
+  options.forEach(op=>{
+    let btn=document.createElement("button");
+    btn.innerText=op;
+    btn.onclick=()=> op==correctAnswer ? correct() : wrong();
+    document.getElementById("answers").appendChild(btn);
+  });
+}
+
+function correct(){
+  score++;
+  document.getElementById("score").innerText="⭐ "+score;
+  document.getElementById("feedback").innerText="🎉 Muito bem!";
+  setTimeout(generateQuestion,1200);
+}
+
+function wrong(){
+  document.getElementById("feedback").innerText="❌ Tente novamente";
+}
+
+function setQuestion(text){
+  document.getElementById("question").innerText=text;
+}
+
+function rand(max){
+  return Math.floor(Math.random()*max)+1;
+}
+
+showScreen("welcome-screen");
