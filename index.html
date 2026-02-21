@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>MathGame</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- BOAS VINDAS -->
+  <div id="welcome-screen" class="screen">
+    <h1>🎮 MathGame</h1>
+    <h2>Olá, Francisco Arthur! 👋</h2>
+    <div class="mascot">🤖</div>
+    <button onclick="startGame()">Começar</button>
+  </div>
+
+  <!-- MENU DE MODOS -->
+  <div id="menu-screen" class="screen hidden">
+    <h2>Escolha o desafio</h2>
+    <button onclick="startMode('soma')">➕ Soma</button>
+    <button onclick="startMode('sub')">➖ Subtração</button>
+    <button onclick="startMode('contagem')">🔢 Contagem</button>
+  </div>
+
+  <!-- JOGO -->
+  <div id="game-screen" class="screen hidden">
+    <h2 id="phase-title"></h2>
+    <p id="score">⭐ Pontos: 0</p>
+
+    <div id="mascot-talk">Vamos lá! 🚀</div>
+
+    <div id="question"></div>
+    <div id="answers"></div>
+
+    <p id="feedback"></p>
+  </div>
+
+  <!-- TELA FINAL -->
+  <div id="final-screen" class="screen hidden">
+    <h1>🏆 Parabéns!</h1>
+    <h2>Você terminou!</h2>
+    <p id="final-score"></p>
+    <button onclick="goToMenu()">Jogar Novamente</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
